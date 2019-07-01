@@ -1,7 +1,7 @@
 import ts from 'typescript';
-// @ts-ignore
-import sources from 'polyfill-library/lib/sources';
 import * as tsMorph from 'ts-morph';
+
+import allPolyfills from './polyfills';
 
 interface Match {
   kind?: ts.SyntaxKind;
@@ -15,18 +15,14 @@ interface Match {
   right?: Match;
 }
 
-let polyfills: Promise<string[]>;
+export function analyze(options: {
+  source: string;
+  include?: string[];
+  exclude?: string[];
+}) {
+  const {source, include = allPolyfills, exclude = []} = options;
 
-async function listPolyfills() {
-  if (!polyfills) {
-    console.log('list all');
-    polyfills = sources.listPolyfills();
-  }
-  return await polyfills;
-}
-
-export async function analyze(source: string) {
-  const polyfills = await listPolyfills();
+  const polyfills = include.filter((polyfill) => !exclude.includes(polyfill));
 
   const matches: [string, Match][] = [];
 

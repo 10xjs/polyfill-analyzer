@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "update-list": "node -e \"require('polyfill-library').listAllPolyfills().then((list)=>fs.writeFileSync('./src/polyfills.ts','// GENERATED FILE. DO NOT EDIT.\\n// Exported from polyfill-library@'+require('polyfill-library/package.json').version+'\\nexport default '+JSON.stringify(list,0,2)+';'))\"",
     "test:lint": "npx eslint . --ext .tsx,.ts,.js.,.jsx",
     "test:types": "npx tsc --noEmit",
     "test:spec": "npx jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
@@ -25,14 +26,14 @@
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "eslint": "^6.0.1",
+    "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.8.0",
     "jest-circus": "^24.8.0",
+    "polyfill-library": "^3.34.0",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2"
   },
   "dependencies": {
-    "eslint-plugin-prettier": "^3.1.0",
-    "polyfill-library": "^3.34.0",
     "ts-morph": "^3.0.0",
     "typescript": "^3.5.2"
   },

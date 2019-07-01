@@ -10,8 +10,8 @@ describe('requestAnimationFrame', () => {
       `var foo = {requestAnimationFrame(){}};foo.requestAnimationFrame();`,
       `(function (w) { w.requestAnimationFrame() })()`,
       `({foo(){this.requestAnimationFrame()}}).foo()`,
-    ])('`%s`', async (source) => {
-      expect(await analyze(source)).toEqual([]);
+    ])('`%s`', (source) => {
+      expect(analyze({source, include: ['requestAnimationFrame']})).toEqual([]);
     });
   });
 
@@ -24,8 +24,10 @@ describe('requestAnimationFrame', () => {
       `this.requestAnimationFrame();`,
       `(() => { this.requestAnimationFrame() })`,
       `(function (w) { w.requestAnimationFrame() })(this)`,
-    ])('`%s`', async (source) => {
-      expect(await analyze(source)).toEqual(['requestAnimationFrame']);
+    ])('`%s`', (source) => {
+      expect(analyze({source, include: ['requestAnimationFrame']})).toEqual([
+        'requestAnimationFrame',
+      ]);
     });
   });
 });
