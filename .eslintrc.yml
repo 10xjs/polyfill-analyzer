@@ -1,0 +1,61 @@
+# Parse all files with TypeScript.
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: tsconfig.json
+
+plugins:
+  - prettier
+  - '@typescript-eslint'
+
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+
+settings:
+  react:
+    version: detect
+env:
+  es6: true
+  node: true
+
+rules:
+  'no-console': off
+
+  # Require all code to be correctly formatted with Prettier.
+  prettier/prettier: error
+
+  # Prettier enforces indentation globally. Disable any other indent rules to
+  # prevent any conflicts.
+  '@typescript-eslint/indent': off
+
+  # The any type can be used responsibility in many situations.
+  '@typescript-eslint/no-explicit-any': off
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - varsIgnorePattern: _
+      argsIgnorePattern: _
+
+  # Return types are inferred correctly in the vast majority of cases.
+  '@typescript-eslint/explicit-function-return-type': off
+
+  # It is useful to declare an empty interface when merging an interface by
+  # extending it.
+  '@typescript-eslint/no-empty-interface': off
+
+  # TypeScript's class member accessibility syntax differs from the proposed
+  # es syntax. Prefer the established _ prefix convention to define "private"
+  # members.
+  '@typescript-eslint/explicit-member-accessibility': off
+
+  '@typescript-eslint/camelcase': off
+
+  '@typescript-eslint/no-var-requires': off
+
+  'no-redeclare': off
+  'no-dupe-class-members': off
+
+overrides:
+  # Enable the global jest environment in test files.
+  - files: '*.test.ts'
+    env:
+      jest: true

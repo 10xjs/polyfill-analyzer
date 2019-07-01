@@ -1,0 +1,56 @@
+{
+  "name": "polyfill-analyzer",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:lint": "npx eslint . --ext .tsx,.ts,.js.,.jsx",
+    "test:types": "npx tsc --noEmit",
+    "test:spec": "npx jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
+    "test": "npm run test:types --silent && npm run test:lint --silent&& npm run test:spec --silent"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/10xjs/polyfill-analyzer.git"
+  },
+  "author": "Neal Granger <neal@nealg.com>",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/10xjs/polyfill-analyzer/issues"
+  },
+  "homepage": "https://github.com/10xjs/polyfill-analyzer#readme",
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.0.10",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
+    "eslint": "^6.0.1",
+    "jest": "^24.8.0",
+    "jest-circus": "^24.8.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2"
+  },
+  "dependencies": {
+    "eslint-plugin-prettier": "^3.1.0",
+    "polyfill-library": "^3.34.0",
+    "ts-morph": "^3.0.0",
+    "typescript": "^3.5.2"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^(/.*)$": "<rootDir>/src$1"
+    },
+    "testURL": "http://localhost/",
+    "testMatch": [
+      "<rootDir>/src/**/?(*.)test.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
+  }
+}
