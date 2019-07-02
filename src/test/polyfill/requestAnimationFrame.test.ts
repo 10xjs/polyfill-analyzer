@@ -1,4 +1,4 @@
-import {analyze} from '../analyze';
+import {analyze} from '../../analyze';
 
 describe('requestAnimationFrame', () => {
   describe('negative matches', () => {
