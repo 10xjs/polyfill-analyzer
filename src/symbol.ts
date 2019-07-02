@@ -3,38 +3,43 @@ import ts from 'typescript';
 
 const symbolCache = new WeakMap<
   tsMorph.Project,
-  Map<string, tsMorph.Symbol | undefined>
+  Map<string, tsMorph.Symbol[]>
 >();
 
 function getProjectCache(project: tsMorph.Project) {
   if (!symbolCache.has(project)) {
-    const cache = new Map<string, tsMorph.Symbol | undefined>();
+    const cache = new Map<string, tsMorph.Symbol[]>();
 
     symbolCache.set(project, cache);
 
     return cache;
   }
 
-  return symbolCache.get(project) as Map<string, tsMorph.Symbol | undefined>;
+  return symbolCache.get(project) as Map<string, tsMorph.Symbol[]>;
 }
 
-export function getGlobalSymbol(project: tsMorph.Project, name: string) {
+export function getGlobalSymbols(project: tsMorph.Project, name: string) {
   const projectCache = getProjectCache(project);
 
   if (!projectCache.has(name)) {
-    const sourceFile = project.createSourceFile('__global_temp__.ts', name);
+    const sourceFile = project.createSourceFile(
+      '__global__.ts',
+      `this.${name};window.${name};self.${name};`,
+    );
 
-    const symbol = sourceFile
-      .set({statements: [name], kind: tsMorph.StructureKind.SourceFile})
-      .getFirstDescendantByKindOrThrow(ts.SyntaxKind.Identifier)
-      .getSymbol();
+    const symbols = sourceFile
+      .getDescendantsOfKind(ts.SyntaxKind.PropertyAccessExpression)
+      .map((expression) => {
+        return expression.getSymbol();
+      })
+      .filter(Boolean) as tsMorph.Symbol[];
 
     project.removeSourceFile(sourceFile);
 
-    projectCache.set(name, symbol);
+    projectCache.set(name, symbols);
 
-    return symbol;
+    return symbols;
   }
 
-  return projectCache.get(name);
+  return projectCache.get(name) as tsMorph.Symbol[];
 }

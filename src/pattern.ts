@@ -4,10 +4,10 @@ import * as tsMorph from 'ts-morph';
 // @ts-ignore
 import {getSyntaxKindName} from 'ts-morph/dist/utils';
 
-import {getGlobalSymbol} from './symbol';
+import {getGlobalSymbols} from './symbol';
 
 export interface Pattern {
-  symbol?: tsMorph.Symbol;
+  // symbol?: tsMorph.Symbol;
   kind?: ts.SyntaxKind;
   typeSymbol?: tsMorph.Symbol;
 
@@ -30,49 +30,57 @@ export function getPatterns(
   polyfills: string[],
   loose: boolean = false,
 ) {
-  function getTargetPattern(parts: string[]): Pattern | void {
+  function getTargetPatterns(parts: string[]): Pattern[] {
     const identifier = parts[0];
-    const globalSymbol = getGlobalSymbol(project, identifier);
+    const globalSymbols = getGlobalSymbols(project, identifier);
 
-    if (!globalSymbol) {
+    if (!globalSymbols.length) {
       throw new Error(`Failed to retrieve global symbol for ${identifier}`);
     }
 
     if (parts.length === 3 && parts[1] === 'prototype') {
       const member = parts[2];
 
-      return {
-        kind: ts.SyntaxKind.PropertyAccessExpression,
-        expression: {
-          typeSymbol: globalSymbol,
-        },
-        name: member,
-      };
+      return globalSymbols.map((symbol) => {
+        return {
+          kind: ts.SyntaxKind.PropertyAccessExpression,
+          expression: {
+            typeSymbol: symbol,
+          },
+          name: member,
+        };
+      });
     }
 
     if (parts.length === 2) {
       const member = parts[1];
 
-      return {
-        kind: ts.SyntaxKind.PropertyAccessExpression,
-        expression: {
-          symbol: globalSymbol,
-        },
-        name: member,
-      };
+      return globalSymbols.map((symbol) => {
+        return {
+          kind: ts.SyntaxKind.PropertyAccessExpression,
+          expression: {
+            typeSymbol: symbol,
+          },
+          name: member,
+        };
+      });
     }
 
     if (parts.length === 1) {
-      return {
-        symbol: globalSymbol,
-      };
+      return globalSymbols.map((symbol) => {
+        return {
+          typeSymbol: symbol,
+        };
+      });
     }
+
+    return [];
   }
 
   const patterns = new Map<string, Pattern[]>();
 
   polyfills.forEach((polyfill) => {
-    const polyfillPatterns = [];
+    const polyfillPatterns: Pattern[] = [];
 
     const parts = polyfill.split('.');
 
@@ -88,49 +96,53 @@ export function getPatterns(
       return;
     }
 
-    const target = getTargetPattern(parts);
+    const targetPatterns = getTargetPatterns(parts);
 
-    if (!target) {
+    if (!targetPatterns.length) {
       throw new Error(`Invalid ${polyfill}`);
     }
 
     if (loose) {
-      polyfillPatterns.push(target);
+      targetPatterns.forEach((targetPattern) => {
+        polyfillPatterns.push(targetPattern);
+      });
     } else {
-      // identifier()
-      polyfillPatterns.push({
-        kind: ts.SyntaxKind.CallExpression,
-        expression: target,
-      });
+      targetPatterns.forEach((targetPattern) => {
+        // identifier()
+        polyfillPatterns.push({
+          kind: ts.SyntaxKind.CallExpression,
+          expression: targetPattern,
+        });
 
-      // identifier.property
-      polyfillPatterns.push({
-        kind: ts.SyntaxKind.PropertyAccessExpression,
-        expression: target,
-      });
+        // identifier.property
+        polyfillPatterns.push({
+          kind: ts.SyntaxKind.PropertyAccessExpression,
+          expression: targetPattern,
+        });
 
-      // identifier instanceof foo
-      polyfillPatterns.push({
-        kind: ts.SyntaxKind.BinaryExpression,
-        operatorToken: {
-          kind: ts.SyntaxKind.InstanceOfKeyword,
-        },
-        left: target,
-      });
+        // identifier instanceof foo
+        polyfillPatterns.push({
+          kind: ts.SyntaxKind.BinaryExpression,
+          operatorToken: {
+            kind: ts.SyntaxKind.InstanceOfKeyword,
+          },
+          left: targetPattern,
+        });
 
-      // foo instanceof identifier
-      polyfillPatterns.push({
-        kind: ts.SyntaxKind.BinaryExpression,
-        operatorToken: {
-          kind: ts.SyntaxKind.InstanceOfKeyword,
-        },
-        right: target,
-      });
+        // foo instanceof identifier
+        polyfillPatterns.push({
+          kind: ts.SyntaxKind.BinaryExpression,
+          operatorToken: {
+            kind: ts.SyntaxKind.InstanceOfKeyword,
+          },
+          right: targetPattern,
+        });
 
-      // new Identifier()
-      polyfillPatterns.push({
-        kind: ts.SyntaxKind.NewExpression,
-        expression: target,
+        // new Identifier()
+        polyfillPatterns.push({
+          kind: ts.SyntaxKind.NewExpression,
+          expression: targetPattern,
+        });
       });
     }
 
@@ -141,9 +153,9 @@ export function getPatterns(
 }
 
 export function matchPattern(node: tsMorph.Node, pattern: Pattern) {
-  if (pattern.symbol !== undefined && node.getSymbol() !== pattern.symbol) {
-    return false;
-  }
+  // if (pattern.symbol !== undefined && node.getSymbol() !== pattern.symbol) {
+  //   return false;
+  // }
 
   if (pattern.kind !== undefined && node.getKind() !== pattern.kind) {
     return false;
@@ -211,7 +223,7 @@ export function matchPattern(node: tsMorph.Node, pattern: Pattern) {
 
 export function printPattern(pattern: Pattern) {
   const {
-    symbol,
+    // symbol,
     kind,
     typeSymbol,
     expression,
@@ -224,9 +236,9 @@ export function printPattern(pattern: Pattern) {
 
   const result: Record<string, any> = {};
 
-  if (symbol !== undefined) {
-    result.symbol = symbol.getFullyQualifiedName();
-  }
+  // if (symbol !== undefined) {
+  //   result.symbol = symbol.getFullyQualifiedName();
+  // }
   if (kind !== undefined) {
     result.kind = getSyntaxKindName(kind);
   }
