@@ -6,14 +6,18 @@ import {getPatterns, matchPattern} from './pattern';
 
 export function analyze(options: {
   source: string;
+  project?: tsMorph.Project;
   include?: string[];
   exclude?: string[];
 }) {
-  const {source, include = allPolyfills, exclude = []} = options;
+  const {
+    source,
+    project = createProject(),
+    include = allPolyfills,
+    exclude = [],
+  } = options;
 
   const polyfills = include.filter((polyfill) => !exclude.includes(polyfill));
-
-  const project = createProject();
 
   const patterns = getPatterns(project, polyfills);
 
@@ -40,6 +44,8 @@ export function analyze(options: {
   }
 
   walk(sourceFile);
+
+  project.removeSourceFile(sourceFile);
 
   return Array.from(matched);
 }

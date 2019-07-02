@@ -1,6 +1,9 @@
 import {analyze} from '../../analyze';
+import {createProject} from '../../project';
 
 describe('requestAnimationFrame', () => {
+  const project = createProject();
+
   describe('negative matches', () => {
     test.each<string>([
       `requestAnimationFrame`,
@@ -11,7 +14,9 @@ describe('requestAnimationFrame', () => {
       `(function (w) { w.requestAnimationFrame() })()`,
       `({foo(){this.requestAnimationFrame()}}).foo()`,
     ])('`%s`', (source) => {
-      expect(analyze({source, include: ['requestAnimationFrame']})).toEqual([]);
+      expect(
+        analyze({source, project, include: ['requestAnimationFrame']}),
+      ).toEqual([]);
     });
   });
 
@@ -25,9 +30,9 @@ describe('requestAnimationFrame', () => {
       `(() => { this.requestAnimationFrame() })`,
       `(function (w) { w.requestAnimationFrame() })(this)`,
     ])('`%s`', (source) => {
-      expect(analyze({source, include: ['requestAnimationFrame']})).toEqual([
-        'requestAnimationFrame',
-      ]);
+      expect(
+        analyze({source, project, include: ['requestAnimationFrame']}),
+      ).toEqual(['requestAnimationFrame']);
     });
   });
 });
