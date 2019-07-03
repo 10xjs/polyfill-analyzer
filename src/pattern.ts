@@ -9,7 +9,6 @@ import {getGlobalSymbolsOrThrow, areSameSymbol} from './symbol';
 export interface Pattern {
   symbol?: tsMorph.Symbol;
   kind?: ts.SyntaxKind;
-  // typeSymbol?: tsMorph.Symbol;
 
   // CallExpression
   // PropertyAccessExpression
@@ -44,9 +43,7 @@ export function getPatterns(project: tsMorph.Project, polyfills: string[]) {
         polyfill,
         symbols.map((symbol) => {
           return {
-            kind: ts.SyntaxKind.Identifier,
             symbol,
-            // typeSymbol: symbol,
           };
         }),
       );
@@ -70,7 +67,6 @@ export function getPatterns(project: tsMorph.Project, polyfills: string[]) {
         polyfill,
         symbols.map((symbol) => {
           return {
-            // kind: ts.SyntaxKind.Identifier,
             symbol,
           };
         }),
@@ -91,7 +87,6 @@ export function getPatterns(project: tsMorph.Project, polyfills: string[]) {
         polyfill,
         symbols.map((symbol) => {
           return {
-            kind: ts.SyntaxKind.Identifier,
             symbol,
           };
         }),
@@ -117,13 +112,6 @@ export function matchPattern(node: tsMorph.Node, pattern: Pattern) {
   if (pattern.kind !== undefined && node.getKind() !== pattern.kind) {
     return false;
   }
-
-  // if (
-  //   pattern.typeSymbol !== undefined &&
-  //   node.getType().getSymbol() !== pattern.typeSymbol
-  // ) {
-  //   return false;
-  // }
 
   if (pattern.expression !== undefined) {
     if (!tsMorph.TypeGuards.hasExpression(node)) {
@@ -179,17 +167,7 @@ export function matchPattern(node: tsMorph.Node, pattern: Pattern) {
 }
 
 export function printPattern(pattern: Pattern) {
-  const {
-    symbol,
-    kind,
-    // typeSymbol,
-    expression,
-    operatorToken,
-    left,
-    right,
-    name,
-    // text,
-  } = pattern;
+  const {symbol, kind, expression, operatorToken, left, right, name} = pattern;
 
   const result: Record<string, any> = {};
 
@@ -199,9 +177,6 @@ export function printPattern(pattern: Pattern) {
   if (kind !== undefined) {
     result.kind = getSyntaxKindName(kind);
   }
-  // if (typeSymbol !== undefined) {
-  //   result.typeSymbol = typeSymbol.getFullyQualifiedName();
-  // }
   if (expression !== undefined) {
     result.expression = printPattern(expression);
   }

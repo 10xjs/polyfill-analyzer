@@ -4,12 +4,22 @@ import {createProject} from '../../project';
 describe('requestAnimationFrame', () => {
   const project = createProject();
 
-  describe('negative matches', () => {
+  describe('should match', () => {
     test.each<string>([
       `requestAnimationFrame`,
-      `this.requestAnimationFrame`,
-      `foo = requestAnimationFrame`,
-      `typeof requestAnimationFrame`,
+      `requestAnimationFrame()`,
+      `var foo = requestAnimationFrame; foo();`,
+      `window.requestAnimationFrame();`,
+      `this.requestAnimationFrame();`,
+    ])('`%s`', (source) => {
+      expect(
+        analyze({source, project, include: ['requestAnimationFrame']}),
+      ).toEqual(['requestAnimationFrame']);
+    });
+  });
+
+  describe('should not match', () => {
+    test.each<string>([
       `var foo = {requestAnimationFrame(){}};foo.requestAnimationFrame();`,
       `(function (w) { w.requestAnimationFrame() })()`,
       `({foo(){this.requestAnimationFrame()}}).foo()`,
@@ -17,22 +27,6 @@ describe('requestAnimationFrame', () => {
       expect(
         analyze({source, project, include: ['requestAnimationFrame']}),
       ).toEqual([]);
-    });
-  });
-
-  describe('positive matches', () => {
-    test.each<string>([
-      `requestAnimationFrame()`,
-      `requestAnimationFrame instanceof foo`,
-      `var foo = requestAnimationFrame; foo();`,
-      `window.requestAnimationFrame();`,
-      `this.requestAnimationFrame();`,
-      `(() => { this.requestAnimationFrame() })`,
-      `(function (w) { w.requestAnimationFrame() })(this)`,
-    ])('`%s`', (source) => {
-      expect(
-        analyze({source, project, include: ['requestAnimationFrame']}),
-      ).toEqual(['requestAnimationFrame']);
     });
   });
 });

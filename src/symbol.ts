@@ -77,7 +77,24 @@ export function areSameSymbol(a: tsMorph.Symbol, b: tsMorph.Symbol): boolean {
     return false;
   }
 
-  if (!a.compilerSymbol.name !== !b.compilerSymbol.name) {
+  if (a.compilerSymbol.name !== b.compilerSymbol.name) {
+    return false;
+  }
+
+  if (
+    a.compilerSymbol.declarations.length !==
+    b.compilerSymbol.declarations.length
+  ) {
+    return false;
+  }
+
+  const equalDeclarations = a.compilerSymbol.declarations.every(
+    (declaration, index) => {
+      return b.compilerSymbol.declarations[index] === declaration;
+    },
+  );
+
+  if (!equalDeclarations) {
     return false;
   }
 
