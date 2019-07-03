@@ -71,29 +71,50 @@ export function isSupportedPolyfillOrThrow(polyfill: string) {
     return true;
   }
 
-  throw new Error(`Unexpected non-supported polyfill: ${polyfill}`);
+  throw new Error(`Encountered non-supported polyfill: ${polyfill}`);
 }
 
+export function isSupportedPolyfillOrWarn(polyfill: string) {
+  if (isSupportedPolyfill(polyfill)) {
+    return true;
+  }
+
+  console.warn(`Encountered non-supported polyfill: ${polyfill}`);
+
+  return false;
+}
+
+/**
+ *
+ * @param options.source TypeScript source code.
+ * @param options.project Provide an existing project instance to improve performance of multiple calls to analyze.
+ * @param options.include List of polyfills (from polyfill-library) to detect.
+ * @param options.exclude List of polyfills to ignore. The exclude list has precedence over the include list.
+ * @param options.strict TypeScript source code.
+ * @param options.unsupportedPolyfill Specify the behavior when an included unsupported polyfill is encountered.
+ */
 export function analyze(options: {
   source: string;
   project?: tsMorph.Project;
   include?: string[];
   exclude?: string[];
-  strict?: boolean;
+  unsupportedPolyfill?: 'throw' | 'warn' | 'ignore';
 }) {
   const {
     source,
     project = createProject(),
     include = supportedPolyfills,
     exclude = [],
-    strict = true,
+    unsupportedPolyfill = 'throw',
   } = options;
 
   const filteredPolyfills =
     include === supportedPolyfills
       ? include
-      : strict
+      : unsupportedPolyfill === 'throw'
       ? include.filter(isSupportedPolyfillOrThrow)
+      : unsupportedPolyfill === 'warn'
+      ? include.filter(isSupportedPolyfillOrWarn)
       : include.filter(isSupportedPolyfill);
 
   const polyfills = filteredPolyfills.filter(
