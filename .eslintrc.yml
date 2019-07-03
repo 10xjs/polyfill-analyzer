@@ -21,6 +21,8 @@ env:
 rules:
   'no-console': off
 
+  eqeqeq: error
+
   # Require all code to be correctly formatted with Prettier.
   prettier/prettier: error
 

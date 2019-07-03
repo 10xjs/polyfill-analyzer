@@ -28,11 +28,13 @@ export function getGlobalSymbols(project: tsMorph.Project, name: string) {
     );
 
     const symbols = sourceFile
-      .getDescendantsOfKind(ts.SyntaxKind.PropertyAccessExpression)
+      .getDescendantsOfKind(ts.SyntaxKind.ExpressionStatement)
       .map((expression) => {
-        return expression.getSymbol();
+        return expression.getExpression().getSymbol();
       })
-      .filter(Boolean) as tsMorph.Symbol[];
+      .filter((symbol, index, self) => {
+        return symbol && self.indexOf(symbol) === index;
+      }) as tsMorph.Symbol[];
 
     project.removeSourceFile(sourceFile);
 
@@ -42,4 +44,42 @@ export function getGlobalSymbols(project: tsMorph.Project, name: string) {
   }
 
   return projectCache.get(name) as tsMorph.Symbol[];
+}
+
+export function getGlobalSymbolsOrThrow(
+  project: tsMorph.Project,
+  name: string,
+) {
+  const symbols = getGlobalSymbols(project, name);
+  if (symbols.length === 0) {
+    throw new Error(`Failed to retrieve global symbol for ${name}`);
+  }
+  return symbols;
+}
+
+// 🚨🚨🚨 HACK ALERT 🚨🚨🚨
+// TypeScript seems to create multiple SymbolObject instances for the same
+// logical symbol under unknown circumstances. Checking for symbol equality
+// instead by comparing properties which aren't publicly exposed.
+export function areSameSymbol(a: tsMorph.Symbol, b: tsMorph.Symbol): boolean {
+  if (a === b) {
+    return true;
+  }
+
+  const symbolA = a.compilerSymbol as any;
+  const symbolB = b.compilerSymbol as any;
+
+  if (symbolA.declaration !== symbolB.declaration) {
+    return false;
+  }
+
+  if (symbolA.parent !== symbolB.parent) {
+    return false;
+  }
+
+  if (!a.compilerSymbol.name !== !b.compilerSymbol.name) {
+    return false;
+  }
+
+  return true;
 }
