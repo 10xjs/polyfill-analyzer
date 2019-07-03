@@ -24,13 +24,28 @@ export function getGlobalSymbols(project: tsMorph.Project, name: string) {
   if (!projectCache.has(name)) {
     const sourceFile = project.createSourceFile(
       '__global__.ts',
-      `this.${name};window.${name};self.${name};`,
+      `${name};this.${name};window.${name};self.${name};`,
     );
 
     const symbols = sourceFile
       .getDescendantsOfKind(ts.SyntaxKind.ExpressionStatement)
       .map((expression) => {
-        return expression.getExpression().getSymbol();
+        const symbol = expression.getExpression().getSymbol();
+
+        if (symbol) {
+          return symbol;
+        }
+
+        const typeSymbol = expression
+          .getExpression()
+          .getType()
+          .getSymbol();
+
+        if (typeSymbol) {
+          return typeSymbol;
+        }
+
+        return undefined;
       })
       .filter((symbol, index, self) => {
         return symbol && self.indexOf(symbol) === index;
@@ -101,11 +116,79 @@ export function areSameSymbol(a: tsMorph.Symbol, b: tsMorph.Symbol): boolean {
   return true;
 }
 
+function getPolyfillSymbolNames(polyfill: string) {
+  const esSymbolMemberMatch = /^([A-Z][a-zA-Z]+\.prototype)\.@@([a-z]+)$/.exec(
+    polyfill,
+  );
+  if (esSymbolMemberMatch) {
+    return [`${esSymbolMemberMatch[1]}[Symbol.${esSymbolMemberMatch[2]}]`];
+  }
+
+  if (polyfill === 'Element.prototype.dataset') {
+    return ['HTMLElement.prototype.dataset'];
+  }
+
+  if (polyfill === 'Element.prototype.placeholder') {
+    return ['HTMLInputElement.prototype.dataset'];
+  }
+
+  if (polyfill === 'Number.Epsilon') {
+    return ['Number.EPSILON'];
+  }
+
+  if (polyfill === 'UserTiming') {
+    return [
+      'performance',
+      'Performance',
+      'PerformanceEntry',
+      'PerformanceMark',
+      'PerformanceMeasure',
+    ];
+  }
+
+  if (polyfill === 'WebAnimations') {
+    // TODO: Test Element.prototype.animate, document.timeline
+    return [
+      'Animation',
+      'AnimationEffect',
+      'AnimationEvent',
+      'AnimationTimeline',
+      'AnimationPlaybackEvent',
+      'DocumentTimeline',
+      'KeyframeEffect',
+    ];
+  }
+
+  if (polyfill === `~viewport`) {
+    return [
+      'scrollX',
+      'scrollY',
+      'innerWidth',
+      'innerHeight',
+      'pageXOffset',
+      'pageYOffset',
+    ];
+  }
+
+  return [polyfill];
+}
+
+function getPolyfillSymbols(project: tsMorph.Project, polyfill: string) {
+  let symbols: tsMorph.Symbol[] = [];
+
+  const symbolNames = getPolyfillSymbolNames(polyfill);
+  symbolNames.forEach((name) => {
+    symbols = symbols.concat(getGlobalSymbolsOrThrow(project, name));
+  });
+
+  return symbols;
+}
+
 export function getSymbols(project: tsMorph.Project, polyfills: string[]) {
   const symbols = new Map<string, tsMorph.Symbol[]>();
 
   polyfills.forEach((polyfill) => {
-    symbols.set(polyfill, getGlobalSymbolsOrThrow(project, polyfill));
+    symbols.set(polyfill, getPolyfillSymbols(project, polyfill));
   });
 
   return symbols;

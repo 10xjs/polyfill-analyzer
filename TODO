@@ -1,0 +1,15 @@
+Event.focusIn && Event.focusOut
+  JSX onFocusIn ?
+  addEventListener('focusIn') ?
+
+HTMLPictureElement
+  Is it possible (and a good idea) to detect interaction with
+  HTMLPictureElement instances? Maybe look for JSX `<picture>` and for
+  document.createElement('picture')?
+
+Intl.~locale.xxx
+  It would be possible to match on literal string arguments to Intl functions
+  to be able to detect _some_ locale references - but most references would
+  likely be opaque in real-world use cases. Matching specific local chunks
+  is probably best kept out of this library's scope.
+

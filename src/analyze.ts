@@ -4,20 +4,101 @@ import allPolyfills from './polyfills';
 import {createProject} from './project';
 import {getSymbols, matchSymbol} from './symbol';
 
+/**
+ * A filtered list of polyfill names from `polyfill-library` whose target
+ * features can be identified in the TypesScript AST.
+ */
+export const supportedPolyfills = allPolyfills.filter((polyfill) => {
+  // Ignore Intl local polyfills.
+  if (/^Intl\.~locale\./.test(polyfill)) {
+    return false;
+  }
+
+  // Ignore internal polyfills. These are provided by polyfill-library only as
+  // shared dependencies for other exposed polyfills.
+  if (/^_/.test(polyfill)) {
+    return false;
+  }
+
+  // Event types don't represent global compiler symbols. Checking for them
+  // will require a different AST matching approach.
+  if (
+    polyfill === 'Event.focusin' ||
+    polyfill === 'Event.focusout' ||
+    polyfill === 'Event.hashchange'
+  ) {
+    // TODO: Create AST match patterns for events.
+    // Maybe match on `<Component onFocusIn={}/>` and on
+    // `Element.addEventListener('focusin')`?
+    return false;
+  }
+
+  // Ignore `console.profiles()` polyfill. I can't find any documentation on
+  // what this feature is or which environments natively support it. The
+  // polyfill source in polyfill-library is
+  // `this.console.profiles = function profiles() {};` - which doesn't help
+  // explain what the feature actually is.
+  // see https://github.com/Financial-Times/polyfill-service/pull/570
+  if (polyfill === 'console.profiles') {
+    return false;
+  }
+
+  // The dom lib does not include `requestIdleCallback` since it is an
+  // "experimental" API.
+  // see: https://github.com/microsoft/TypeScript/issues/21309
+  if (polyfill === 'requestIdleCallback') {
+    return false;
+  }
+
+  // Ignore the html5 element polyfill (which resolves to html5shiv).
+  if (polyfill === '~html5-elements') {
+    // TODO: Look into ways to detect use of html5 elements. Potentially
+    // match on `document.createElement('section')` and JSX `<section>`.
+    // Unfortuantely `createElement('section')` can't be matched reliably.
+    // Also maybe match on `HTMLSectionElement`?
+    return false;
+  }
+
+  return true;
+});
+
+export function isSupportedPolyfill(polyfill: string) {
+  return supportedPolyfills.includes(polyfill);
+}
+
+export function isSupportedPolyfillOrThrow(polyfill: string) {
+  if (isSupportedPolyfill(polyfill)) {
+    return true;
+  }
+
+  throw new Error(`Unexpected non-supported polyfill: ${polyfill}`);
+}
+
 export function analyze(options: {
   source: string;
   project?: tsMorph.Project;
   include?: string[];
   exclude?: string[];
+  strict?: boolean;
 }) {
   const {
     source,
     project = createProject(),
-    include = allPolyfills,
+    include = supportedPolyfills,
     exclude = [],
+    strict = true,
   } = options;
 
-  const polyfills = include.filter((polyfill) => !exclude.includes(polyfill));
+  const filteredPolyfills =
+    include === supportedPolyfills
+      ? include
+      : strict
+      ? include.filter(isSupportedPolyfillOrThrow)
+      : include.filter(isSupportedPolyfill);
+
+  const polyfills = filteredPolyfills.filter(
+    (polyfill) => !exclude.includes(polyfill),
+  );
 
   const symbols = getSymbols(project, polyfills);
 
