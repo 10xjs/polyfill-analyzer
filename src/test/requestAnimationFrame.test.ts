@@ -1,9 +1,7 @@
-import {analyze} from '../../analyze';
-import {createProject} from '../../project';
+import {analyze} from '../analyze';
+import {project} from './project';
 
 describe('requestAnimationFrame', () => {
-  const project = createProject();
-
   describe('should match', () => {
     test.each<string>([
       `requestAnimationFrame`,
@@ -20,9 +18,9 @@ describe('requestAnimationFrame', () => {
 
   describe('should not match', () => {
     test.each<string>([
-      `var foo = {requestAnimationFrame(){}};foo.requestAnimationFrame();`,
-      `(function (w) { w.requestAnimationFrame() })()`,
-      `({foo(){this.requestAnimationFrame()}}).foo()`,
+      // It should not match when shadowed.
+      `(() => { var requestAnimationFrame = () => {}; requestAnimationFrame(); })()`,
+      `var foo = { requestAnimationFrame(){} }; foo.requestAnimationFrame();`,
     ])('`%s`', (source) => {
       expect(
         analyze({source, project, include: ['requestAnimationFrame']}),

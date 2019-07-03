@@ -100,3 +100,18 @@ export function areSameSymbol(a: tsMorph.Symbol, b: tsMorph.Symbol): boolean {
 
   return true;
 }
+
+export function getSymbols(project: tsMorph.Project, polyfills: string[]) {
+  const symbols = new Map<string, tsMorph.Symbol[]>();
+
+  polyfills.forEach((polyfill) => {
+    symbols.set(polyfill, getGlobalSymbolsOrThrow(project, polyfill));
+  });
+
+  return symbols;
+}
+
+export function matchSymbol(node: tsMorph.Node, symbol: tsMorph.Symbol) {
+  const nodeSymbol = node.getSymbol();
+  return nodeSymbol !== undefined && areSameSymbol(nodeSymbol, symbol);
+}

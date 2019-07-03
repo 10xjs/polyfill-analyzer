@@ -2,7 +2,7 @@ import * as tsMorph from 'ts-morph';
 
 import allPolyfills from './polyfills';
 import {createProject} from './project';
-import {getPatterns, matchPattern} from './pattern';
+import {getSymbols, matchSymbol} from './symbol';
 
 export function analyze(options: {
   source: string;
@@ -19,20 +19,20 @@ export function analyze(options: {
 
   const polyfills = include.filter((polyfill) => !exclude.includes(polyfill));
 
-  const patterns = getPatterns(project, polyfills);
+  const symbols = getSymbols(project, polyfills);
 
   const sourceFile = project.createSourceFile('source.ts', source);
 
   let matched: Set<string> = new Set();
 
   function walk(node: tsMorph.Node) {
-    for (const [polyfill, polyfillPatterns] of patterns) {
+    for (const [polyfill, polyfillSymbols] of symbols) {
       if (matched.has(polyfill)) {
         continue;
       }
 
-      for (const pattern of polyfillPatterns) {
-        if (matchPattern(node, pattern)) {
+      for (const pattern of polyfillSymbols) {
+        if (matchSymbol(node, pattern)) {
           matched.add(polyfill);
         }
       }

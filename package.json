@@ -7,7 +7,7 @@
     "update-list": "node -e \"require('polyfill-library').listAllPolyfills().then((list)=>fs.writeFileSync('./src/polyfills.ts','// GENERATED FILE. DO NOT EDIT.\\n// Exported from polyfill-library@'+require('polyfill-library/package.json').version+'\\nexport default '+JSON.stringify(list,0,2)+';'))\"",
     "test:lint": "npx eslint . --ext .tsx,.ts,.js.,.jsx",
     "test:types": "npx tsc --noEmit",
-    "test:spec": "npx jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
+    "test:spec": "npx jest --runInBand --coverage=${SPEC_COVERAGE:-$CI}",
     "test": "npm run test:types --silent && npm run test:lint --silent&& npm run test:spec --silent"
   },
   "repository": {

@@ -1,0 +1,13 @@
+Event.focusIn && Event.focusOut
+  JSX onFocusIn ?
+  addEventListener('focusIn') ?
+
+Symbol:
+  Array.prototype.@@iterator
+  DOMTokenList.prototype.@@iterator
+  NodeList.prototype.@@iterator
+
+HTMLPictureElement ???
+
+Intl.~locale.xxx ???
+
