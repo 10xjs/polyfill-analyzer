@@ -6,7 +6,8 @@ import {getSymbols, matchSymbol} from './symbol';
 
 /**
  * A filtered list of polyfill names from `polyfill-library` whose target
- * features can be identified in the TypesScript AST.
+ * features can be identified in the TypesScript AST and are supported by
+ * `analyze`.
  */
 export const supportedPolyfills = allPolyfills.filter((polyfill) => {
   // Ignore Intl local polyfills.
@@ -62,11 +63,20 @@ export const supportedPolyfills = allPolyfills.filter((polyfill) => {
   return true;
 });
 
+/**
+ * Check if a polyfill name is supported by `analyze`.
+ * @param polyfill
+ */
 export function isSupportedPolyfill(polyfill: string) {
   return supportedPolyfills.includes(polyfill);
 }
 
-export function isSupportedPolyfillOrThrow(polyfill: string) {
+/**
+ * Check if a polyfill name is supported by `analyze`. Throw an error if
+ * the provided name is not supported.
+ * @param polyfill
+ */
+export function isSupportedPolyfillOrThrow(polyfill: string): true {
   if (isSupportedPolyfill(polyfill)) {
     return true;
   }
@@ -74,6 +84,11 @@ export function isSupportedPolyfillOrThrow(polyfill: string) {
   throw new Error(`Encountered non-supported polyfill: ${polyfill}`);
 }
 
+/**
+ * Check if a polyfill name is supported by `analyze`. Log a warning to stdout
+ * if the provided name is not supported.
+ * @param polyfill
+ */
 export function isSupportedPolyfillOrWarn(polyfill: string) {
   if (isSupportedPolyfill(polyfill)) {
     return true;

@@ -17,7 +17,17 @@ function getProjectCache(project: tsMorph.Project) {
 
   return symbolCache.get(project) as Map<string, tsMorph.Symbol[]>;
 }
-
+/**
+ * Get a list of TypeScript checker symbol instances for a global identifier.
+ * This function returns a list as opposed to a single symbol as some global
+ * identifiers are defined multiple times in the TypeScript core lib
+ * definitions.
+ *
+ * i.e. `window.requestAnimationFrame` is not equal to
+ * `globalThis.requestAnimationFrame` inside the checker.
+ * @param project
+ * @param name
+ */
 export function getGlobalSymbols(project: tsMorph.Project, name: string) {
   const projectCache = getProjectCache(project);
 
@@ -61,6 +71,12 @@ export function getGlobalSymbols(project: tsMorph.Project, name: string) {
   return projectCache.get(name) as tsMorph.Symbol[];
 }
 
+/**
+ * Get a list of TypeScript checker symbol instances for a global identifier or
+ * throw an error if no symbols are found.
+ * @param project
+ * @param name
+ */
 export function getGlobalSymbolsOrThrow(
   project: tsMorph.Project,
   name: string,
@@ -72,10 +88,17 @@ export function getGlobalSymbolsOrThrow(
   return symbols;
 }
 
-// 🚨🚨🚨 HACK ALERT 🚨🚨🚨
-// TypeScript seems to create multiple SymbolObject instances for the same
-// logical symbol under unknown circumstances. Checking for symbol equality
-// instead by comparing properties which aren't publicly exposed.
+/**
+ * Test the equality of two TypeScript checker symbols.
+ *
+ * 🚨🚨🚨 HACK ALERT 🚨🚨🚨
+ * TypeScript seems to create multiple SymbolObject instances for the same
+ * logical symbol under circumstances that I have yet to analyze. This function
+ * falls back to * comparing properties which aren't publicly exposed by the
+ * compiler.
+ * @param a
+ * @param b
+ */
 export function areSameSymbol(a: tsMorph.Symbol, b: tsMorph.Symbol): boolean {
   if (a === b) {
     return true;
@@ -116,6 +139,12 @@ export function areSameSymbol(a: tsMorph.Symbol, b: tsMorph.Symbol): boolean {
   return true;
 }
 
+/**
+ * Map a supported polyfill-library polyfill name to a list of global TypeScript
+ * identifier. Most polyfill names can be used as literal identifiers. Any
+ * exceptions are handled here.
+ * @param polyfill
+ */
 function getPolyfillSymbolNames(polyfill: string) {
   const esSymbolMemberMatch = /^([A-Z][a-zA-Z]+\.prototype)\.@@([a-z]+)$/.exec(
     polyfill,
@@ -173,6 +202,12 @@ function getPolyfillSymbolNames(polyfill: string) {
   return [polyfill];
 }
 
+/**
+ * Map a supported polyfill-library name to list of TypeScript checker symbol
+ * instances.
+ * @param project
+ * @param polyfill
+ */
 function getPolyfillSymbols(project: tsMorph.Project, polyfill: string) {
   let symbols: tsMorph.Symbol[] = [];
 
@@ -184,6 +219,12 @@ function getPolyfillSymbols(project: tsMorph.Project, polyfill: string) {
   return symbols;
 }
 
+/**
+ * Map a list of supported polyfill-library names to map of TypeScript checker
+ * symbol instances.
+ * @param project
+ * @param polyfill
+ */
 export function getSymbols(project: tsMorph.Project, polyfills: string[]) {
   const symbols = new Map<string, tsMorph.Symbol[]>();
 
@@ -194,6 +235,10 @@ export function getSymbols(project: tsMorph.Project, polyfills: string[]) {
   return symbols;
 }
 
+/**
+ * Check if a TypeScript AST node represents a checker symbol instance.
+ * @param symbol
+ */
 export function matchSymbol(node: tsMorph.Node, symbol: tsMorph.Symbol) {
   const nodeSymbol = node.getSymbol();
   return nodeSymbol !== undefined && areSameSymbol(nodeSymbol, symbol);
