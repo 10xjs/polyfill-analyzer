@@ -124,7 +124,6 @@ export function isSupportedPolyfillOrWarn(polyfill: string) {
  * @param options.project Provide an existing project instance to improve performance of multiple calls to analyze.
  * @param options.include List of polyfills (from polyfill-library) to detect.
  * @param options.exclude List of polyfills to ignore. The exclude list has precedence over the include list.
- * @param options.strict TypeScript source code.
  * @param options.unsupportedPolyfill Specify the behavior when an included unsupported polyfill is encountered.
  */
 export function analyze(options: {

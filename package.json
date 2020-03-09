@@ -1,7 +1,7 @@
 {
   "name": "polyfill-analyzer",
   "version": "0.1.0",
-  "description": "",
+  "description": "Analyze a javascript file to determine which polyfills are necessary to run it. Designed for use with financial-times/polyfill-library.",
   "author": "Neal Granger <neal@nealg.com>",
   "license": "MIT",
   "repository": {
