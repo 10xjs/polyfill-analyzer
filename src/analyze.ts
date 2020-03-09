@@ -170,6 +170,7 @@ export function analyze(options: {
       for (const pattern of polyfillSymbols) {
         if (matchSymbol(node, pattern)) {
           matched.add(polyfill);
+          break;
         }
       }
     }
