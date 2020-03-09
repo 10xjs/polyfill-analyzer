@@ -15,7 +15,7 @@
     "url": "git+https://github.com/10xjs/polyfill-analyzer.git"
   },
   "author": "Neal Granger <neal@nealg.com>",
-  "license": "CC0-1.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/10xjs/polyfill-analyzer/issues"
   },
