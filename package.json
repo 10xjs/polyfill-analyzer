@@ -2,24 +2,28 @@
   "name": "polyfill-analyzer",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "update-list": "node -e \"require('polyfill-library').listAllPolyfills().then((list)=>fs.writeFileSync('./src/polyfills.ts','// GENERATED FILE. DO NOT EDIT.\\n// Exported from polyfill-library@'+require('polyfill-library/package.json').version+'\\nexport default '+JSON.stringify(list,0,2)+';'))\"",
-    "test:lint": "npx eslint . --ext .tsx,.ts,.js.,.jsx",
-    "test:types": "npx tsc --noEmit",
-    "test:spec": "npx jest --runInBand --coverage=${SPEC_COVERAGE:-$CI}",
-    "test": "npm run test:types --silent && npm run test:lint --silent&& npm run test:spec --silent"
-  },
+  "author": "Neal Granger <neal@nealg.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/10xjs/polyfill-analyzer.git"
   },
-  "author": "Neal Granger <neal@nealg.com>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/10xjs/polyfill-analyzer/issues"
   },
   "homepage": "https://github.com/10xjs/polyfill-analyzer#readme",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/analyze",
+  "types": "dist/analyze.d.ts",
+  "scripts": {
+    "build": "tsc -p build.tsconfig.json",
+    "generate": "node -e \"require('polyfill-library').listAllPolyfills().then((list)=>fs.writeFileSync('./src/polyfills.ts','// GENERATED FILE. DO NOT EDIT.\\n// Exported from polyfill-library@'+require('polyfill-library/package.json').version+'\\nexport default '+JSON.stringify(list,0,2)+';'))\"",
+    "test:lint": "npx eslint . --ext ts",
+    "test:spec": "npx jest --runInBand --coverage=${SPEC_COVERAGE:-$CI}",
+    "test": "npm run test:lint --silent&& npm run test:spec --silent"
+  },
   "devDependencies": {
     "@types/jest": "^25.1.4 ",
     "@types/node": "^13.9.0",
