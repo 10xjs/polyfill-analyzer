@@ -13,3 +13,5 @@ Intl.~locale.xxx
   likely be opaque in real-world use cases. Matching specific local chunks
   is probably best kept out of this library's scope.
 
+ResizeObserver
+  see https://github.com/Microsoft/TypeScript/issues/28502

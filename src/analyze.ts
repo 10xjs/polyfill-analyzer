@@ -10,8 +10,28 @@ import {getSymbols, matchSymbol} from './symbol';
  * `analyze`.
  */
 export const supportedPolyfills = allPolyfills.filter((polyfill) => {
-  // Ignore Intl local polyfills.
-  if (/^Intl\.~locale\./.test(polyfill)) {
+  // ResizeObserver type is missing in typescript
+  if (polyfill === 'ResizeObserver') {
+    return false;
+  }
+
+  // Detecting use of scroll `behavior: smooth` isn't worth the effort.
+  if (polyfill === 'smoothscroll') {
+    return false;
+  }
+
+  // Element.prototype.inert type is missing in typescript
+  if (polyfill === 'Element.prototype.inert') {
+    return false;
+  }
+
+  // Ignore Intl locale polyfills.
+  if (/^Intl(\.PluralRules)?\.~locale\./.test(polyfill)) {
+    return false;
+  }
+
+  // Intl.RelativeTimeFormat type is missing in typescript.
+  if (/^Intl.RelativeTimeFormat/.test(polyfill)) {
     return false;
   }
 
@@ -100,7 +120,6 @@ export function isSupportedPolyfillOrWarn(polyfill: string) {
 }
 
 /**
- *
  * @param options.source TypeScript source code.
  * @param options.project Provide an existing project instance to improve performance of multiple calls to analyze.
  * @param options.include List of polyfills (from polyfill-library) to detect.
@@ -140,7 +159,7 @@ export function analyze(options: {
 
   const sourceFile = project.createSourceFile('source.ts', source);
 
-  let matched: Set<string> = new Set();
+  const matched: Set<string> = new Set();
 
   function walk(node: tsMorph.Node) {
     for (const [polyfill, polyfillSymbols] of symbols) {

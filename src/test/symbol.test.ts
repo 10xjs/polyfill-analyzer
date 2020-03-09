@@ -20,6 +20,12 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
   expect(symbolMap).toMatchInlineSnapshot(`
     Array [
       Array [
+        "AbortController",
+        Array [
+          "AbortController",
+        ],
+      ],
+      Array [
         "Array.from",
         Array [
           "ArrayConstructor.from",
@@ -167,13 +173,18 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "Blob",
         Array [
           "Blob",
-          "Window.Blob",
         ],
       ],
       Array [
         "CustomEvent",
         Array [
           "CustomEvent",
+        ],
+      ],
+      Array [
+        "DOMRect",
+        Array [
+          "DOMRect",
         ],
       ],
       Array [
@@ -273,6 +284,12 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "Element.prototype.nextElementSibling",
+        Array [
+          "NonDocumentTypeChildNode.nextElementSibling",
+        ],
+      ],
+      Array [
         "Element.prototype.placeholder",
         Array [
           "HTMLOrSVGElement.dataset",
@@ -282,6 +299,12 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "Element.prototype.prepend",
         Array [
           "ParentNode.prepend",
+        ],
+      ],
+      Array [
+        "Element.prototype.previousElementSibling",
+        Array [
+          "NonDocumentTypeChildNode.previousElementSibling",
         ],
       ],
       Array [
@@ -345,6 +368,12 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "HTMLTemplateElement",
+        Array [
+          "HTMLTemplateElement",
+        ],
+      ],
+      Array [
         "IntersectionObserver",
         Array [
           "IntersectionObserver",
@@ -360,6 +389,12 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "Intl",
         Array [
           "Intl",
+        ],
+      ],
+      Array [
+        "Intl.PluralRules",
+        Array [
+          "Intl.PluralRules",
         ],
       ],
       Array [
@@ -591,9 +626,21 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "Object.fromEntries",
+        Array [
+          "ObjectConstructor.fromEntries",
+        ],
+      ],
+      Array [
         "Object.getOwnPropertyDescriptor",
         Array [
           "ObjectConstructor.getOwnPropertyDescriptor",
+        ],
+      ],
+      Array [
+        "Object.getOwnPropertyDescriptors",
+        Array [
+          "ObjectConstructor.getOwnPropertyDescriptors",
         ],
       ],
       Array [
@@ -675,6 +722,90 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "Reflect",
+        Array [
+          "Reflect",
+        ],
+      ],
+      Array [
+        "Reflect.apply",
+        Array [
+          "Reflect.apply",
+        ],
+      ],
+      Array [
+        "Reflect.construct",
+        Array [
+          "Reflect.construct",
+        ],
+      ],
+      Array [
+        "Reflect.defineProperty",
+        Array [
+          "Reflect.defineProperty",
+        ],
+      ],
+      Array [
+        "Reflect.deleteProperty",
+        Array [
+          "Reflect.deleteProperty",
+        ],
+      ],
+      Array [
+        "Reflect.get",
+        Array [
+          "Reflect.get",
+        ],
+      ],
+      Array [
+        "Reflect.getOwnPropertyDescriptor",
+        Array [
+          "Reflect.getOwnPropertyDescriptor",
+        ],
+      ],
+      Array [
+        "Reflect.getPrototypeOf",
+        Array [
+          "Reflect.getPrototypeOf",
+        ],
+      ],
+      Array [
+        "Reflect.has",
+        Array [
+          "Reflect.has",
+        ],
+      ],
+      Array [
+        "Reflect.isExtensible",
+        Array [
+          "Reflect.isExtensible",
+        ],
+      ],
+      Array [
+        "Reflect.ownKeys",
+        Array [
+          "Reflect.ownKeys",
+        ],
+      ],
+      Array [
+        "Reflect.preventExtensions",
+        Array [
+          "Reflect.preventExtensions",
+        ],
+      ],
+      Array [
+        "Reflect.set",
+        Array [
+          "Reflect.set",
+        ],
+      ],
+      Array [
+        "Reflect.setPrototypeOf",
+        Array [
+          "Reflect.setPrototypeOf",
+        ],
+      ],
+      Array [
         "RegExp.prototype.flags",
         Array [
           "RegExp.flags",
@@ -699,6 +830,30 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "String.prototype.anchor",
+        Array [
+          "String.anchor",
+        ],
+      ],
+      Array [
+        "String.prototype.big",
+        Array [
+          "String.big",
+        ],
+      ],
+      Array [
+        "String.prototype.blink",
+        Array [
+          "String.blink",
+        ],
+      ],
+      Array [
+        "String.prototype.bold",
+        Array [
+          "String.bold",
+        ],
+      ],
+      Array [
         "String.prototype.codePointAt",
         Array [
           "String.codePointAt",
@@ -711,9 +866,45 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "String.prototype.fixed",
+        Array [
+          "String.fixed",
+        ],
+      ],
+      Array [
+        "String.prototype.fontcolor",
+        Array [
+          "String.fontcolor",
+        ],
+      ],
+      Array [
+        "String.prototype.fontsize",
+        Array [
+          "String.fontsize",
+        ],
+      ],
+      Array [
         "String.prototype.includes",
         Array [
           "String.includes",
+        ],
+      ],
+      Array [
+        "String.prototype.italics",
+        Array [
+          "String.italics",
+        ],
+      ],
+      Array [
+        "String.prototype.link",
+        Array [
+          "String.link",
+        ],
+      ],
+      Array [
+        "String.prototype.normalize",
+        Array [
+          "String.normalize",
         ],
       ],
       Array [
@@ -735,9 +926,33 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "String.prototype.small",
+        Array [
+          "String.small",
+        ],
+      ],
+      Array [
         "String.prototype.startsWith",
         Array [
           "String.startsWith",
+        ],
+      ],
+      Array [
+        "String.prototype.strike",
+        Array [
+          "String.strike",
+        ],
+      ],
+      Array [
+        "String.prototype.sub",
+        Array [
+          "String.sub",
+        ],
+      ],
+      Array [
+        "String.prototype.sup",
+        Array [
+          "String.sup",
         ],
       ],
       Array [
@@ -747,9 +962,33 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "String.prototype.trimEnd",
+        Array [
+          "String.trimEnd",
+        ],
+      ],
+      Array [
+        "String.prototype.trimStart",
+        Array [
+          "String.trimStart",
+        ],
+      ],
+      Array [
+        "String.raw",
+        Array [
+          "StringConstructor.raw",
+        ],
+      ],
+      Array [
         "Symbol",
         Array [
           "Symbol",
+        ],
+      ],
+      Array [
+        "Symbol.asyncIterator",
+        Array [
+          "SymbolConstructor.asyncIterator",
         ],
       ],
       Array [
@@ -774,6 +1013,12 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "Symbol.match",
         Array [
           "SymbolConstructor.match",
+        ],
+      ],
+      Array [
+        "Symbol.prototype.description",
+        Array [
+          "Symbol.description",
         ],
       ],
       Array [
@@ -822,14 +1067,13 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "URL",
         Array [
           "URL",
-          "Window.URL",
         ],
       ],
       Array [
         "UserTiming",
         Array [
           "performance",
-          "Window.performance",
+          "performance",
           "Performance",
           "PerformanceEntry",
           "PerformanceMark",
@@ -876,14 +1120,14 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "atob",
         Array [
           "atob",
-          "WindowBase64.atob",
+          "atob",
         ],
       ],
       Array [
         "console",
         Array [
           "console",
-          "WindowConsole.console",
+          "console",
         ],
       ],
       Array [
@@ -1034,14 +1278,14 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "devicePixelRatio",
         Array [
           "devicePixelRatio",
-          "Window.devicePixelRatio",
+          "devicePixelRatio",
         ],
       ],
       Array [
         "document",
         Array [
           "document",
-          "Window.document",
+          "document",
         ],
       ],
       Array [
@@ -1078,21 +1322,27 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "fetch",
         Array [
           "fetch",
-          "GlobalFetch.fetch",
+          "fetch",
         ],
       ],
       Array [
         "getComputedStyle",
         Array [
           "getComputedStyle",
-          "Window.getComputedStyle",
+          "getComputedStyle",
+        ],
+      ],
+      Array [
+        "globalThis",
+        Array [
+          "globalThis",
         ],
       ],
       Array [
         "localStorage",
         Array [
           "localStorage",
-          "WindowLocalStorage.localStorage",
+          "localStorage",
         ],
       ],
       Array [
@@ -1105,7 +1355,7 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "matchMedia",
         Array [
           "matchMedia",
-          "Window.matchMedia",
+          "matchMedia",
         ],
       ],
       Array [
@@ -1127,10 +1377,17 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         ],
       ],
       Array [
+        "queueMicrotask",
+        Array [
+          "queueMicrotask",
+          "queueMicrotask",
+        ],
+      ],
+      Array [
         "requestAnimationFrame",
         Array [
           "requestAnimationFrame",
-          "Window.requestAnimationFrame",
+          "requestAnimationFrame",
         ],
       ],
       Array [
@@ -1149,17 +1406,17 @@ test('getSymbols should return the correct map of polyfill to AST symbols', () =
         "~viewport",
         Array [
           "scrollX",
-          "Window.scrollX",
+          "scrollX",
           "scrollY",
-          "Window.scrollY",
+          "scrollY",
           "innerWidth",
-          "Window.innerWidth",
+          "innerWidth",
           "innerHeight",
-          "Window.innerHeight",
+          "innerHeight",
           "pageXOffset",
-          "Window.pageXOffset",
+          "pageXOffset",
           "pageYOffset",
-          "Window.pageYOffset",
+          "pageYOffset",
         ],
       ],
     ]
